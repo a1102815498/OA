@@ -21,7 +21,7 @@
 
     <mvc:interceptors>
         <mvc:interceptor>
-            <mcv:mapping path="/**"></mcv:mapping>
+            <mvc:mapping path="/**"></mvc:mapping>
 
             <bean class="com.cyl.global.LoginInterceptor"></bean>
         </mvc:interceptor>
