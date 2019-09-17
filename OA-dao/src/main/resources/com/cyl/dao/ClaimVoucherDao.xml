@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.dao.ClaimVoucherDao">
+    <resultMap id="claimVoucher" type="Claim_voucher">
+        <id property="id" column="id" javaType="int"></id>
+        <result property="cause" column="cause" javaType="String"></result>
+        <result property="create_sn" column="create_sn" javaType="String"></result>
+        <result property="create_time" column="create_time" javaType="java.util.Date"></result>
+        <result property="next_deal_sn" column="next_deal_sn" javaType="String"></result>
+        <result property="total_amount" column="total_amount" javaType="Double"></result>
+        <result property="status" column="status" javaType="String"></result>
+        <association property="creater" column="create_sn" javaType="Employee">
+            <result property="name" column="cname" javaType="String"></result>
+            <result property="post" column="cpost" javaType="String"></result>
+        </association>
+        <association property="dealer" column="next_deal_sn" javaType="Employee">
+            <result property="name" column="dname" javaType="String"></result>
+            <result property="post" column="dpost" javaType="String"></result>
+
+        </association>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="Claim_voucher">
+        insert into claim_voucher(cause ,create_sn,create_time,next_deal_sn,total_amount,status)
+        values (#{cause},#{create_sn},#{create_time},#{next_deal_sn},#{total_amount},#{status})
+    </insert>
+
+    <update id="update" parameterType="Claim_voucher">
+        update claim_voucher set cause=#{cause},next_deal_sn=#{next_deal_sn},total_amount=#{total_amount},status=#{status} where id=#{id}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from claim_voucher where id=#{id}
+    </delete>
+
+    <select id="select" resultMap="claimVoucher">
+          select cv.*,ce.name cname,ce.post cpost,de.name dname,de.post dpost from claim_voucher cv
+          left join employee ce on cv.create_sn = ce.sn
+          left join employee de on cv.next_deal_sn = de.sn
+          where cv.id = #{id}
+    </select>
+
+    <select id="selectByCreateSn" parameterType="String" resultMap="claimVoucher">
+         select cv.*,ce.name cname,ce.post cpost,de.name dname,de.post dpost from claim_voucher cv
+          left join employee ce on cv.create_sn = ce.sn
+          left join employee de on cv.next_deal_sn = de.sn
+          where cv.create_sn = #{csn} order by cv.create_time desc
+    </select>
+
+    <select id="selectByNextDealSn" parameterType="String" resultMap="claimVoucher">
+         select cv.*,ce.name cname,ce.post cpost,de.name dname,de.post dpost from claim_voucher cv
+          left join employee ce on cv.create_sn = ce.sn
+          left join employee de on cv.next_deal_sn = de.sn
+          where cv.next_deal_sn = #{cdsn} order by cv.create_time desc
+    </select>
+</mapper>

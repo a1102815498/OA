@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.4//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyl.dao.EmployeeDao">
+    <resultMap id="employee" type="Employee">
+        <id property="sn" column="sn" javaType="String"></id>
+        <result property="password" column="password" javaType="String"></result>
+        <result property="name" column="name" javaType="String"></result>
+        <result property="department_sn" column="department_sn" javaType="String"></result>
+        <result property="post" column="post" javaType="String"></result>
+      <association property="department" column="department_sn" javaType="Department">
+          <id property="sn" column="dsn" javaType="String"></id>
+          <result property="name" column="dname" javaType="String"></result>
+
+      </association>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="Employee">
+        insert into employee values(#{sn},#{password},#{name},#{department_sn},#{post})
+    </insert>
+    <update id="update" parameterType="Employee">
+        update employee set name=#{name} ,password=#{password},department_sn=#{department_sn} ,post=#{post} where sn=#{sn}
+    </update>
+    <delete id="delete" parameterType="Employee">
+        delete from employee where sn=#{sn}
+    </delete>
+    <select id="select" parameterType="String" resultMap="employee">
+        select e.* ,d.sn dsn ,d.name dname from employee e left join department d on e.department_sn = d.sn where e.sn =#{sn}
+    </select>
+
+    <select id="selectall" resultMap="employee">
+       select e.* ,d.sn dsn ,d.name dname from employee e left join department d on e.department_sn = d.sn
+    </select>
+
+    <select id="selectByDepartmentAndPost" resultMap="employee">
+        select e.*,d.name dname,d.sn dsn from employee e left join department d on e.department_sn = d.sn
+        where e.sn is not null
+        <if test="dsn!=null">
+            and e.department_sn=#{dsn}
+        </if>
+        <if test="post!=null">
+            and e.post=#{post}
+        </if>
+    </select>
+</mapper>
